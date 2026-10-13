@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Go Getter 3 — Grammar Jeopardy</title>
+<style>
+:root{--navy:#14213d;--blue:#234a9b;--orange:#ff8c42;--lime:#d8ef64;--cream:#fff9e9;--white:#fff;--ink:#17213a}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(145deg,#14213d,#243d78);color:var(--white);min-height:100vh}
+header{text-align:center;padding:24px 16px 14px}h1{margin:0;font-size:clamp(26px,4vw,44px);letter-spacing:1px}header p{margin:8px 0 0;color:#e0e8ff}
+.scorebar{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;padding:8px 16px 20px}.team{display:flex;align-items:center;gap:12px;background:#ffffff16;border:2px solid #ffffff40;border-radius:14px;padding:10px 14px}.team input{font:inherit;color:white;background:#ffffff18;border:1px solid #ffffff50;border-radius:7px;padding:7px;width:130px}.score{font-size:26px;font-weight:800;color:var(--lime);min-width:48px;text-align:right}
+main{max-width:1450px;margin:auto;padding:0 14px 30px}.board{display:grid;grid-template-columns:repeat(8,minmax(105px,1fr));gap:7px}.category{display:flex;align-items:center;justify-content:center;text-align:center;min-height:92px;padding:10px 5px;background:var(--orange);color:#24233b;border-radius:9px;font-weight:800;font-size:clamp(12px,1.2vw,16px);line-height:1.2}.tile{border:0;border-radius:9px;background:var(--blue);color:#ffdc62;font-weight:900;font-size:clamp(21px,2.3vw,34px);min-height:75px;cursor:pointer;box-shadow:0 3px 0 #101a3b;transition:transform .12s,background .12s}.tile:hover:not(:disabled){transform:translateY(-2px);background:#3161bd}.tile:disabled{background:#35415e;color:#7c879f;cursor:default;box-shadow:none}
+.note{text-align:center;color:#e0e8ff;font-size:13px;margin:15px 0 0}
+.overlay{display:none;position:fixed;inset:0;background:#080f22df;z-index:10;align-items:center;justify-content:center;padding:16px}.overlay.show{display:flex}.modal{width:min(800px,100%);max-height:90vh;overflow:auto;background:var(--cream);color:var(--ink);border-radius:20px;padding:clamp(20px,4vw,38px);box-shadow:0 20px 80px #0008}.modal-top{display:flex;justify-content:space-between;gap:12px;align-items:center}.tag{font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#52618a}.points{font-size:24px;font-weight:900;color:#d76522}.close{border:0;background:#e8e8ee;border-radius:50%;width:38px;height:38px;font-size:22px;cursor:pointer}.question{font-size:clamp(21px,3vw,30px);font-weight:750;line-height:1.35;margin:25px 0}.answer{display:none;background:#eaf2c8;border-left:5px solid #91b52e;border-radius:8px;padding:15px 18px;font-size:18px;line-height:1.5;margin:16px 0}.answer.show{display:block}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px}.actions button{border:0;border-radius:9px;padding:12px 16px;font-weight:800;cursor:pointer}.reveal{background:#e9efb5;color:#26330d}.award{background:#2b4f9c;color:white}.wrong{background:#e9e9ef;color:#333}.turn{font-size:14px;color:#66708b;margin-top:12px}.footer{text-align:center;color:#cbd6f8;font-size:12px;padding:0 10px 20px}
+.specialbar{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;padding:0 12px 20px}.specialbar button{border:0;border-radius:12px;padding:14px 22px;background:linear-gradient(100deg,#ff8c42,#ffd45c);color:#20213d;font-weight:900;font-size:16px;cursor:pointer;box-shadow:0 4px 0 #9a4c22}.final-text{background:#edf2d4;padding:16px;border-radius:12px;font-size:20px;line-height:1.7}.final-text input{width:105px;max-width:25vw;font-size:20px;text-align:center;border:0;border-bottom:3px solid #526ab2;background:#fff;border-radius:5px;padding:3px;color:#17213a}.wagers{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:15px 0}.wager-card{background:#eef0fa;border-radius:12px;padding:12px}.wager-card label{display:block;font-weight:800;margin-bottom:6px}.wager-card input{width:100%;font:inherit;padding:9px;border:1px solid #aeb8d8;border-radius:8px}.final-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}.final-actions button{border:0;border-radius:9px;padding:12px 14px;font-weight:800;cursor:pointer}.win-overlay{display:none;position:fixed;inset:0;z-index:30;align-items:center;justify-content:center;text-align:center;padding:20px;background:radial-gradient(circle at top,#4e62b8,#10162f 70%);overflow:hidden}.win-overlay.show{display:flex}.winner-card{position:relative;z-index:2;max-width:800px}.winner-kicker{font-size:clamp(16px,3vw,24px);letter-spacing:.22em;color:#ffe477;font-weight:900}.winner-title{font-size:clamp(44px,10vw,100px);line-height:1;margin:18px 0;color:#fff;text-shadow:0 0 18px #ffb84d,0 5px 0 #a3481b;animation:pop .8s cubic-bezier(.2,1.6,.4,1) both}.winner-name{font-size:clamp(25px,5vw,48px);font-weight:900;color:#d8ef64}.winner-score{font-size:22px;color:#f5f5ff;margin:14px}.winner-card button{border:0;border-radius:12px;padding:14px 22px;margin:8px;font-weight:900;cursor:pointer}.confetti{position:absolute;inset:0;pointer-events:none}.confetti i{position:absolute;top:-12vh;width:10px;height:20px;border-radius:2px;animation:fall 3.6s linear infinite;left:var(--x);background:hsl(var(--h),90%,65%);animation-delay:var(--d)}@keyframes fall{to{transform:translateY(125vh) rotate(720deg)}}@keyframes pop{0%{transform:scale(.2) rotate(-8deg);opacity:0}75%{transform:scale(1.12) rotate(2deg)}100%{transform:scale(1);opacity:1}}
+@media(max-width:1000px){.board{grid-template-columns:repeat(4,minmax(0,1fr))}.category{min-height:64px}.tile{min-height:57px}}@media(max-width:480px){.board{gap:5px}.category{font-size:11px;padding:6px 2px}.tile{min-height:52px}.team{padding:8px}.team input{width:92px}}
+</style>
+</head>
+<body>
+<header><h1>GO GETTER 3 · JEOPARDY</h1><p>Pick a category. Choose your points. Beat the other team!</p></header>
+<section class="scorebar" aria-label="Team scores">
+ <div class="team"><input id="name0" value="TEAM A" aria-label="Team A name"><span class="score" id="score0">0</span></div>
+ <div class="team"><input id="name1" value="TEAM B" aria-label="Team B name"><span class="score" id="score1">0</span></div>
+</section>
+<main><div class="board" id="board"></div><p class="note">100–200: Vocabulary & communication · 300–600: Grammar · 700: Fill in the gaps</p></main>
+<div class="specialbar"><button id="finalRoundBtn">★ FINAL JEOPARDY ★</button><button id="winnerBtn">🏆 Show winner</button></div>
+<div class="footer">Teacher tip: ask teams to answer in full sentences for bonus speaking practice.</div>
+<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="question">
+ <div class="modal"><div class="modal-top"><div><div class="tag" id="categoryLabel"></div><div class="points" id="pointsLabel"></div></div><button class="close" id="close" aria-label="Close question">×</button></div>
+ <div class="question" id="question"></div><div class="answer" id="answer"></div><div class="turn" id="turn"></div>
+ <div class="actions"><button class="reveal" id="reveal">Show answer</button><button class="award" id="award">Award points ✓</button><button class="wrong" id="wrong">No points / next</button></div>
+ </div>
+</div>
+<div class="overlay" id="finalOverlay" role="dialog" aria-modal="true" aria-labelledby="finalHeading"><div class="modal"><div class="modal-top"><div><div class="tag">The final challenge</div><div class="points">FINAL JEOPARDY · 100 POINTS PER ANSWER</div></div><button class="close" id="finalClose" aria-label="Close final round">×</button></div><h2 id="finalHeading">A week to remember</h2><p>Eight gaps, four for each team! Team A answers gaps 1–4; Team B answers gaps 5–8. Each correct answer earns 100 points. No wagers in this round.</p><div class="final-text" id="finalText">Last summer, my family <input id="gap1" aria-label="Gap 1" placeholder="1"> (go) to a small town by the sea. While we <input id="gap2" aria-label="Gap 2" placeholder="2"> (walk) along the beach, we <input id="gap3" aria-label="Gap 3" placeholder="3"> (find) a wallet. We took it to the police station, so the owner <input id="gap4" aria-label="Gap 4" placeholder="4"> (can) get it back. We <input id="gap5" aria-label="Gap 5" placeholder="5"> (not / stay) in a hotel because we <input id="gap6" aria-label="Gap 6" placeholder="6"> (rent) a small flat. While my parents <input id="gap7" aria-label="Gap 7" placeholder="7"> (cook) dinner, I <input id="gap8" aria-label="Gap 8" placeholder="8"> (write) postcards to my friends.</div><div class="answer" id="finalAnswer">Answer key: 1 went · 2 were walking · 3 found · 4 could · 5 didn’t stay · 6 rented · 7 were cooking · 8 was writing</div><div class="final-actions"><button class="reveal" id="finalReveal">Reveal answer key</button><button class="award" id="correct0">Team A: +100 ✓</button><button class="wrong" id="incorrect0">Team A: no point</button><button class="award" id="correct1">Team B: +100 ✓</button><button class="wrong" id="incorrect1">Team B: no point</button><button class="wrong" id="finishFinal">Finish & show winner 🏆</button></div><p class="turn" id="finalStatus">Team A: 0/4 answers scored · Team B: 0/4 answers scored. Award +100 for each correct answer, up to four per team.</p></div></div>
+<div class="win-overlay" id="winOverlay"><div class="confetti" id="confetti"></div><div class="winner-card"><div class="winner-kicker">GO GETTER 3 · JEOPARDY</div><div class="winner-title" id="winnerTitle">WE HAVE A WINNER!</div><div class="winner-name" id="winnerName"></div><div class="winner-score" id="winnerScore"></div><button class="reveal" id="closeWinner">Back to the board</button><button class="award" id="playAgain">Play again ↻</button></div></div>
+<script>
+const categories = [
+ {name:"Life at home",items:[
+  ["Name 3 household chores.","do the washing-up, vacuum, tidy my room, take out the rubbish…"],
+  ["What do you say to offer help? Give one example.","“Shall I help you?” / “Can I give you a hand?”"],
+  ["Complete: Be quiet! I ___ (study) for my test.","am studying"],
+  ["Choose: I usually ___ (walk) / am walking to school.","walk"],
+  ["Correct the mistake: She is knowing the answer.","She knows the answer. (“Know” is a stative verb.)"],
+  ["Make a question: They are watching TV now.","What are they doing now? / Are they watching TV now?"],
+  ["Fill in the gaps: At home, Mia usually ___ (tidy) her room on Saturdays, but today she ___ (help) her dad in the garden. She ___ (not / watch) TV at the moment.","tidies · is helping · isn’t watching"]
+ ]},
+ {name:"Shopping",items:[
+  ["Name 3 places where you can shop.","a shopping centre, a department store, a market, a bookshop…"],
+  ["You want to try on a jacket. What can you ask the shop assistant?","“Can I try it on?”"],
+  ["Complete: This bag is ___ (cheap) than that one.","cheaper"],
+  ["Complete: These are the ___ (comfortable) shoes in the shop.","most comfortable"],
+  ["Rewrite using enough: The coat isn’t warm. I can’t wear it in winter.","The coat isn’t warm enough to wear in winter."],
+  ["Correct the sentence: This phone is more cheaper than mine.","This phone is cheaper than mine."],
+  ["Fill in the gaps: This shop is ___ (busy) than the one near my house, but its prices aren’t ___ (low) to attract everyone. It has the ___ (good) selection in town.","busier · low enough · best"]
+ ]},
+ {name:"Going on holiday",items:[
+  ["Name 3 things you might pack for a holiday.","suitcase, passport, sun cream, towel, camera…"],
+  ["Ask politely for a window seat on a plane.","“Could I have a window seat, please?”"],
+  ["Complete: We ___ (visit) the museum yesterday.","visited"],
+  ["Make a Past Simple question: You went to Spain.","Where did you go? / Did you go to Spain?"],
+  ["Make this negative: She bought a souvenir.","She didn’t buy a souvenir."],
+  ["Correct: Did they went to the beach?","Did they go to the beach?"],
+  ["Fill in the gaps: Last summer we ___ (travel) to Italy. We ___ (not / stay) in a hotel; we ___ (rent) a small flat near the sea.","travelled/traveled · didn’t stay · rented"]
+ ]},
+ {name:"Useful things",items:[
+  ["Name 3 useful gadgets or things you use every day.","smartphone, headphones, charger, laptop, smartwatch…"],
+  ["What can you say to show sympathy?","“Oh no! That’s terrible.” / “I’m sorry to hear that.”"],
+  ["Complete: While I ___ (walk) home, it started to rain.","was walking"],
+  ["Complete: I ___ (read) when my phone rang.","was reading"],
+  ["Choose: He broke his arm while he played / was playing football.","was playing"],
+  ["Join with when: I was having a shower. The lights went out.","I was having a shower when the lights went out."],
+  ["Fill in the gaps: I ___ (cycle) home when I ___ (see) an accident. A car ___ (turn) left while a cyclist ___ (cross) the road.","was cycling · saw · was turning · was crossing"]
+ ]},
+ {name:"Health matters",items:[
+  ["Name 3 health problems or injuries.","a headache, a sore throat, a sprained ankle, a cold…"],
+  ["Give one piece of advice to someone with a cold.","“You should get some rest.” / “You have to drink water.”"],
+  ["Complete: You ___ see a doctor if the pain continues. (advice)","should"],
+  ["Complete: You ___ wear a seat belt in a car. (obligation)","have to"],
+  ["Make this negative: You have to eat everything.","You don’t have to eat everything. (It isn’t necessary.)"],
+  ["Choose the correct option: You mustn’t / don’t have to smoke here. (It’s forbidden.)","mustn’t"],
+  ["Fill in the gaps: You ___ (should) stay in bed if you have a fever. You ___ (not / have to) go to school tomorrow if you feel better, but you ___ take your medicine as the doctor says.","should · don’t have to · have to"]
+ ]},
+ {name:"Cooking & eating",items:[
+  ["Name 3 cooking verbs.","boil, fry, bake, chop, mix, stir…"],
+  ["How do you ask if someone wants more food?","“Would you like some more?”"],
+  ["Complete: I ___ (never / try) sushi.","have never tried"],
+  ["Make a Present Perfect sentence with “ever” about food.","Example: Have you ever eaten Thai food?"],
+  ["Choose: Have you ever ate / eaten octopus?","eaten"],
+  ["Correct: She has never went camping.","She has never gone camping."],
+  ["Fill in the gaps: I ___ (never / cook) curry, but I ___ (make) pizza many times. ___ you ever ___ (try) Korean food?","have never cooked · have made · Have · tried"]
+ ]},
+ {name:"Where I live",items:[
+  ["Name 3 places or facilities in a neighbourhood.","a library, a park, a sports centre, a chemist’s…"],
+  ["Invite a friend to a neighbourhood event.","“Would you like to come to the street party?”"],
+  ["Complete: We ___ (meet) our friends at 6 tomorrow. (arrangement)","are meeting"],
+  ["Complete: You ___ park here. It’s forbidden.","mustn’t"],
+  ["Choose: You must / can wear a helmet when cycling here. (It’s a rule.)","must"],
+  ["Correct: I meet my cousin at the café tomorrow evening.","I’m meeting my cousin at the café tomorrow evening."],
+  ["Fill in the gaps: We ___ (have) a street party on Saturday, so we ___ (meet) at the park at 5. You ___ bring food if you don’t want to.","are having · are meeting · don’t have to"]
+ ]},
+ {name:"A happy life",items:[
+  ["Name 3 good manners phrases.","please, thank you, excuse me, I’m sorry…"],
+  ["Agree or disagree: “Money is the most important thing in life.” Give a reason.","Answers vary. Example: “I disagree because family and health are more important.”"],
+  ["Complete: I think it ___ (rain) tomorrow. (prediction)","will rain"],
+  ["Make a prediction about your future using “will”.","Answers vary. Example: “I’ll live in another country.”"],
+  ["Complete: What ___ you ___ (do) when you leave school?","will · do"],
+  ["Give two ways to agree or disagree politely.","“I agree.” / “I’m not sure about that.” / “I see your point, but…”"],
+  ["Fill in the gaps: I think people ___ (use) more electric cars in the future. I ___ (not think) everyone ___ (live) in big cities. What ___ life ___ (be) like in 50 years?","will use · don’t think · will live · will · be"]
+ ]}
+];
+const values=[100,200,300,400,500,600,700];
+const board=document.getElementById("board");
+let scores=[0,0], currentTeam=0, active=null, finalScored=[false,false];
+function teamName(i){return document.getElementById("name"+i).value.trim()||("TEAM "+(i?"B":"A"))}
+function renderBoard(){
+ board.innerHTML="";
+ categories.forEach((cat,c)=>{
+  const head=document.createElement("div");head.className="category";head.textContent=cat.name;board.appendChild(head);
+ });
+ values.forEach((value,r)=>categories.forEach((cat,c)=>{
+  const b=document.createElement("button");b.className="tile";b.textContent=value;
+  b.setAttribute("aria-label",cat.name+" for "+value+" points");
+  b.addEventListener("click",()=>openQuestion(c,r,b));board.appendChild(b);
+ }));
+}
+function openQuestion(c,r,button){
+ active={c,r,button,value:values[r]};currentTeam=(scores[0]===scores[1])?currentTeam:currentTeam;
+ document.getElementById("categoryLabel").textContent=categories[c].name;
+ document.getElementById("pointsLabel").textContent=values[r]+" POINTS";
+ document.getElementById("question").textContent=categories[c].items[r][0];
+ document.getElementById("answer").textContent="Answer: "+categories[c].items[r][1];
+ document.getElementById("answer").classList.remove("show");
+ document.getElementById("reveal").textContent="Show answer";
+ document.getElementById("turn").textContent="Award points to: "+teamName(currentTeam)+" · You can change the active team below.";
+ document.getElementById("overlay").classList.add("show");
+}
+function closeQuestion(){document.getElementById("overlay").classList.remove("show")}
+function updateScores(){scores.forEach((s,i)=>document.getElementById("score"+i).textContent=s)}
+document.getElementById("close").addEventListener("click",closeQuestion);
+document.getElementById("reveal").addEventListener("click",()=>{const a=document.getElementById("answer");a.classList.toggle("show");document.getElementById("reveal").textContent=a.classList.contains("show")?"Hide answer":"Show answer"});
+document.getElementById("award").addEventListener("click",()=>{if(!active)return;scores[currentTeam]+=active.value;active.button.disabled=true;updateScores();currentTeam=1-currentTeam;closeQuestion()});
+document.getElementById("wrong").addEventListener("click",()=>{if(active)active.button.disabled=true;currentTeam=1-currentTeam;closeQuestion()});
+document.getElementById("overlay").addEventListener("click",e=>{if(e.target.id==="overlay")closeQuestion()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeQuestion()});
+const teamPicker=document.createElement("div");teamPicker.className="actions";teamPicker.style.justifyContent="center";teamPicker.style.margin="0 0 18px";
+teamPicker.innerHTML='<button class="award" id="pick0">Team A answers</button><button class="award" id="pick1">Team B answers</button>';
+document.querySelector(".modal").insertBefore(teamPicker,document.querySelector(".actions"));
+document.getElementById("pick0").addEventListener("click",()=>{currentTeam=0;document.getElementById("turn").textContent="Award points to: "+teamName(currentTeam)});
+document.getElementById("pick1").addEventListener("click",()=>{currentTeam=1;document.getElementById("turn").textContent="Award points to: "+teamName(currentTeam)});
+document.getElementById("name0").addEventListener("input",()=>{if(active)document.getElementById("turn").textContent="Award points to: "+teamName(currentTeam)});
+document.getElementById("name1").addEventListener("input",()=>{if(active)document.getElementById("turn").textContent="Award points to: "+teamName(currentTeam)});
+renderBoard();
+// Final Jeopardy and winner ceremony
+const finalOverlay=document.getElementById('finalOverlay');
+let finalCounts=[0,0];
+function openFinal(){
+ finalCounts=[0,0]; finalScored=[false,false];
+ ['correct0','incorrect0','correct1','incorrect1'].forEach(id=>document.getElementById(id).disabled=false);
+ document.getElementById('finalAnswer').classList.remove('show');document.getElementById('finalReveal').textContent='Reveal answer key';
+ document.getElementById('finalStatus').textContent='Team A: 0/4 answers scored · Team B: 0/4 answers scored. Award +100 for each correct answer, up to four per team.';
+ finalOverlay.classList.add('show');
+}
+function closeFinal(){finalOverlay.classList.remove('show')}
+function scoreFinal(i,correct){
+ if(finalCounts[i]>=4)return;
+ finalCounts[i]++;
+ if(correct)scores[i]+=100;
+ updateScores();
+ if(finalCounts[i]>=4){document.getElementById('correct'+i).disabled=true;document.getElementById('incorrect'+i).disabled=true;}
+ document.getElementById('finalStatus').textContent=teamName(0)+': '+finalCounts[0]+'/4 answers scored · '+teamName(1)+': '+finalCounts[1]+'/4 answers scored. '+(correct?teamName(i)+' earns 100 points!':teamName(i)+' gets no points for that answer.');
+}
+document.getElementById('finalRoundBtn').addEventListener('click',openFinal);
+document.getElementById('finalClose').addEventListener('click',closeFinal);
+document.getElementById('finalOverlay').addEventListener('click',e=>{if(e.target===finalOverlay)closeFinal()});
+document.getElementById('finalReveal').addEventListener('click',()=>{const a=document.getElementById('finalAnswer');a.classList.toggle('show');document.getElementById('finalReveal').textContent=a.classList.contains('show')?'Hide answer key':'Reveal answer key'});
+document.getElementById('correct0').addEventListener('click',()=>scoreFinal(0,true));
+document.getElementById('correct1').addEventListener('click',()=>scoreFinal(1,true));
+document.getElementById('incorrect0').addEventListener('click',()=>scoreFinal(0,false));
+document.getElementById('incorrect1').addEventListener('click',()=>scoreFinal(1,false));
+document.getElementById('finishFinal').addEventListener('click',()=>{closeFinal();showWinner()});
+function showWinner(){
+ const overlay=document.getElementById('winOverlay');const title=document.getElementById('winnerTitle');
+ if(scores[0]===scores[1]){title.textContent='IT’S A TIE!';document.getElementById('winnerName').textContent='Both teams are champions!';}
+ else {const i=scores[0]>scores[1]?0:1;title.textContent='CHAMPIONS!';document.getElementById('winnerName').textContent=teamName(i)+' WINS!';}
+ document.getElementById('winnerScore').textContent=teamName(0)+': '+scores[0]+' points  ·  '+teamName(1)+': '+scores[1]+' points';
+ const confetti=document.getElementById('confetti');confetti.innerHTML='';for(let i=0;i<90;i++){const bit=document.createElement('i');bit.style.setProperty('--x',Math.random()*100+'%');bit.style.setProperty('--h',Math.floor(Math.random()*360));bit.style.setProperty('--d',(-Math.random()*3.6)+'s');bit.style.left='var(--x)';confetti.appendChild(bit)}overlay.classList.add('show');
+}
+document.getElementById('winnerBtn').addEventListener('click',showWinner);
+document.getElementById('closeWinner').addEventListener('click',()=>document.getElementById('winOverlay').classList.remove('show'));
+document.getElementById('playAgain').addEventListener('click',()=>{scores=[0,0];currentTeam=0;updateScores();document.querySelectorAll('.tile').forEach(b=>b.disabled=false);document.getElementById('winOverlay').classList.remove('show');});
+</script>
+</body></html>
